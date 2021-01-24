@@ -33,7 +33,7 @@ class GalleryModel(application: Application) : AndroidViewModel(application) {
         VolleySingleton.getInstance(getApplication()).requestQueue.add(stringRequest)
     }
 
-    fun getImgUrl(): String {
+    private fun getImgUrl(): String {
         return "https://pixabay.com/api/?key=19917470-2dc40b2e078c182f08f4d299a&q=${keyWords.random()}&image_type=photo&pretty=true"
     }
 

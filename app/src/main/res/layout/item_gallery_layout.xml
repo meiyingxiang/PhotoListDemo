@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="@string/app_name" />
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            tools:srcCompat="@tools:sample/avatars" />
     </io.supercharge.shimmerlayout.ShimmerLayout>
 </androidx.cardview.widget.CardView>

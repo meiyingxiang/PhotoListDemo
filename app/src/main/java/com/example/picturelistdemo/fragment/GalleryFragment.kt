@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.picturelistdemo.R
 import com.example.picturelistdemo.adapter.GalleryAdapter
@@ -53,7 +54,8 @@ class GalleryFragment : Fragment() {
         recycleGallery = requireActivity().findViewById(R.id.recycleGallery)
         swipeRefreshGallery = requireActivity().findViewById(R.id.swipeRefreshGallery)
         val galleryAdapter = GalleryAdapter()
-        recycleGallery?.layoutManager = GridLayoutManager(requireContext(), 2)
+//        recycleGallery?.layoutManager = GridLayoutManager(requireContext(), 2)
+        recycleGallery?.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         this.recycleGallery?.adapter = galleryAdapter
 //        val get = ViewModelProvider(this).get(GalleryModel::class.java)
         viewModelProvider = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(GalleryModel::class.java)

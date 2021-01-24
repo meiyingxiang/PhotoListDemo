@@ -11,12 +11,17 @@
         android:label="@string/gallery"
         tools:layout="@layout/fragment_gallery">
         <action
-            android:id="@+id/action_galleryFragment_to_photoFragment"
-            app:destination="@id/photoFragment" />
+            android:id="@+id/action_galleryFragment_to_pagePhotoFragment"
+            app:destination="@id/pagePhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/photoFragment"
         android:name="com.example.picturelistdemo.fragment.PhotoFragment"
         android:label="@string/photo"
         tools:layout="@layout/fragment_photo" />
+    <fragment
+        android:id="@+id/pagePhotoFragment"
+        android:name="com.example.picturelistdemo.fragment.PagePhotoFragment"
+        android:label="PagerPhoto"
+        tools:layout="@layout/fragment_page_photo" />
 </navigation>

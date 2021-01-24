@@ -1,13 +1,9 @@
 package com.example.picturelistdemo.adapter
 
-import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,35 +14,35 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.picturelistdemo.R
 import com.example.picturelistdemo.bean.PhotoItem
+import com.github.chrisbanes.photoview.PhotoView
 import io.supercharge.shimmerlayout.ShimmerLayout
 
-class GalleryAdapter() : ListAdapter<PhotoItem, GalleryAdapter.GalleryViewHolder>(DIFFCALLBACK) {
+class PagerPhotoListAdapter : ListAdapter<PhotoItem, PagerPhotoListAdapter.PagerPhotoViewHolder>(DIAMONDBACK) {
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
-        val inflate = LayoutInflater.from(parent.context).inflate(R.layout.item_gallery_layout, parent, false)
-        val galleryViewHolder = GalleryViewHolder(inflate)
-        galleryViewHolder.itemView.setOnClickListener {
-            Bundle().apply {
-//                putParcelable("photo",getItem(galleryViewHolder.adapterPosition))
-                putParcelableArrayList("photoList", ArrayList(currentList))
-                putInt("position", galleryViewHolder.adapterPosition)
-                galleryViewHolder.itemView.findNavController().navigate(R.id.action_galleryFragment_to_pagePhotoFragment, this)
-//                galleryViewHolder.itemView.findNavController().navigate(R.id.action_galleryFragment_to_photoFragment,this)
-            }
-        }
-        return galleryViewHolder
+    class PagerPhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val pagePhotoImg: PhotoView = itemView.findViewById(R.id.pagePhotoImg)
+        val pagePhotoShimmer: ShimmerLayout = itemView.findViewById(R.id.pagePhotoShimmer)
     }
 
-    override fun onBindViewHolder(holder: GalleryViewHolder, position: Int) {
-        holder.shimmerGalleryLayout.apply {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerPhotoViewHolder {
+        val inflate = LayoutInflater.from(parent.context).inflate(R.layout.view_pager_phone_layout, parent, false)
+        val pagerPhotoViewHolder = PagerPhotoViewHolder(inflate)
+        pagerPhotoViewHolder.itemView.setOnClickListener {
+//            pagerPhotoViewHolder.itemView.findNavController().navigate(R.id.action_galleryFragment_to_pagePhotoFragment)
+        }
+        return pagerPhotoViewHolder
+    }
+
+    override fun onBindViewHolder(holder: PagerPhotoViewHolder, position: Int) {
+        val item = getItem(position)
+        val fullUrl = item?.previewURL
+        holder.pagePhotoShimmer.apply {
             setShimmerColor(0x55FFFFFF)
             setShimmerAngle(0)
             startShimmerAnimation()
         }
-        val previewURL = getItem(position).previewURL
         Glide.with(holder.itemView)
-                .load(previewURL)
+                .load(fullUrl)
                 .error(R.drawable.ic_baseline_photo_24)
                 .placeholder(R.drawable.ic_baseline_photo_24)
                 .listener(object : RequestListener<Drawable> {
@@ -56,16 +52,15 @@ class GalleryAdapter() : ListAdapter<PhotoItem, GalleryAdapter.GalleryViewHolder
 
                     override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                         return false.also {
-                            holder.shimmerGalleryLayout.stopShimmerAnimation()
+                            holder.pagePhotoShimmer.stopShimmerAnimation()
                         }
                     }
 
                 })
-                .into(holder.imageView2)
+                .into(holder.pagePhotoImg)
     }
 
-
-    object DIFFCALLBACK : DiffUtil.ItemCallback<PhotoItem>() {
+    object DIAMONDBACK : DiffUtil.ItemCallback<PhotoItem>() {
         override fun areItemsTheSame(oldItem: PhotoItem, newItem: PhotoItem): Boolean {
             return oldItem === newItem
         }
@@ -74,10 +69,4 @@ class GalleryAdapter() : ListAdapter<PhotoItem, GalleryAdapter.GalleryViewHolder
             return oldItem.photoId == newItem.photoId
         }
     }
-
-    class GalleryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView2: ImageView = itemView.findViewById(R.id.imageView2)
-        val shimmerGalleryLayout: ShimmerLayout = itemView.findViewById(R.id.shimmerGalleryLayout)
-    }
 }
-
