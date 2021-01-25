@@ -1,6 +1,5 @@
 package com.example.picturelistdemo.adapter
 
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,9 +18,9 @@ import com.bumptech.glide.request.target.Target
 import com.example.picturelistdemo.R
 import com.example.picturelistdemo.bean.PhotoItem
 import io.supercharge.shimmerlayout.ShimmerLayout
+import kotlinx.android.synthetic.main.item_gallery_layout.view.*
 
 class GalleryAdapter() : ListAdapter<PhotoItem, GalleryAdapter.GalleryViewHolder>(DIFFCALLBACK) {
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
         val inflate = LayoutInflater.from(parent.context).inflate(R.layout.item_gallery_layout, parent, false)
@@ -39,10 +38,17 @@ class GalleryAdapter() : ListAdapter<PhotoItem, GalleryAdapter.GalleryViewHolder
     }
 
     override fun onBindViewHolder(holder: GalleryViewHolder, position: Int) {
-        holder.shimmerGalleryLayout.apply {
-            setShimmerColor(0x55FFFFFF)
-            setShimmerAngle(0)
-            startShimmerAnimation()
+        val photoItem = getItem(position)
+        with(holder.itemView){
+            shimmerGalleryLayout.apply {
+                setShimmerColor(0x55FFFFFF)
+                setShimmerAngle(0)
+                startShimmerAnimation()
+            }
+            imageView2.layoutParams.height = getItem(position).photoHeight
+            textView.text = photoItem.user
+            textView2.text = photoItem.favorites.toString()
+            textView3.text = photoItem.likes.toString()
         }
         val previewURL = getItem(position).previewURL
         Glide.with(holder.itemView)
