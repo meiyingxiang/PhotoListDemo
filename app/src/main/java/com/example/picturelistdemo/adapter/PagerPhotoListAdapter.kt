@@ -4,6 +4,8 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,21 +16,23 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.picturelistdemo.R
 import com.example.picturelistdemo.bean.PhotoItem
+import com.example.picturelistdemo.model.PagerPhotoClickView
 import com.github.chrisbanes.photoview.PhotoView
 import io.supercharge.shimmerlayout.ShimmerLayout
 
-class PagerPhotoListAdapter : ListAdapter<PhotoItem, PagerPhotoListAdapter.PagerPhotoViewHolder>(DIAMONDBACK) {
+class PagerPhotoListAdapter(private val onClickListener: PagerPhotoClickView) : ListAdapter<PhotoItem, PagerPhotoListAdapter.PagerPhotoViewHolder>(DIAMONDBACK) {
 
     class PagerPhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val pagePhotoImg: PhotoView = itemView.findViewById(R.id.pagePhotoImg)
         val pagePhotoShimmer: ShimmerLayout = itemView.findViewById(R.id.pagePhotoShimmer)
+        val downImg: ImageView = itemView.findViewById<ImageView>(R.id.imageView6)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerPhotoViewHolder {
         val inflate = LayoutInflater.from(parent.context).inflate(R.layout.view_pager_phone_layout, parent, false)
         val pagerPhotoViewHolder = PagerPhotoViewHolder(inflate)
-        pagerPhotoViewHolder.itemView.setOnClickListener {
-//            pagerPhotoViewHolder.itemView.findNavController().navigate(R.id.action_galleryFragment_to_pagePhotoFragment)
+        pagerPhotoViewHolder.downImg.setOnClickListener {
+            onClickListener.onClickView(it, pagePhotoImg = pagerPhotoViewHolder.pagePhotoImg)
         }
         return pagerPhotoViewHolder
     }
