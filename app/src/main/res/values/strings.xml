@@ -8,5 +8,7 @@
 
     <string name="notifyMsg">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。</string>
     <string name="title">提示</string>
+    <string name="tv_now_loading">正在加载</string>
+    <string name="tv_load_end">加载完成</string>
 
 </resources>

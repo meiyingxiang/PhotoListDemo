@@ -23,6 +23,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.ORIENTATION_VERTICAL
 import com.example.picturelistdemo.R
 import com.example.picturelistdemo.adapter.PagerPhotoListAdapter
 import com.example.picturelistdemo.bean.PhotoItem
@@ -60,14 +61,17 @@ class PagePhotoFragment : Fragment(), PagerPhotoClickView {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
     )
+
     //如果设置了target > 28，需要增加这个权限，否则不会弹出"始终允许"这个选择框
     private val BACKGROUND_LOCATION_PERMISSION = "android.permission.ACCESS_BACKGROUND_LOCATION"
+
     /**
      * 判断是否需要检测，防止不停的弹框
      */
     private var isNeedCheck = true
 
     private val PERMISSON_REQUESTCODE = 0
+
     //是否需要检测权限，设置为true时，如果用户没有给权限会弹窗提示
     private val needCheckBackLocation = false
     private lateinit var pagePhotoImg: PhotoView
@@ -103,7 +107,8 @@ class PagePhotoFragment : Fragment(), PagerPhotoClickView {
                 pageNumber.text = tvNumber
             }
         })
-
+        viewPager.orientation = ORIENTATION_VERTICAL
+//        viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         viewPager.setCurrentItem(position!!, false)
     }
 
