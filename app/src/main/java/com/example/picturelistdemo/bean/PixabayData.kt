@@ -4,7 +4,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
-data class PixabayData(val total: Int, val totalHits: Int, val hits: Array<PhotoItem>) {
+data class PixabayData( val total: Int, val totalHits: Int, val hits: Array<PhotoItem>) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -10,5 +10,6 @@
     <string name="title">提示</string>
     <string name="tv_now_loading">正在加载</string>
     <string name="tv_load_end">加载完成</string>
+    <string name="tv_load_error">网络异常,请稍后再试</string>
 
 </resources>

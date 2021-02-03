@@ -2,6 +2,7 @@ package com.example.picturelistdemo.fragment
 
 import android.os.Bundle
 import android.view.*
+import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.picturelistdemo.R
 import com.example.picturelistdemo.adapter.GalleryAdapter
+import com.example.picturelistdemo.model.DATA_STATUS_ERROR
+import com.example.picturelistdemo.model.DATA_STATUS_NORMAL
 import com.example.picturelistdemo.model.GalleryModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,8 +30,9 @@ class GalleryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var recycleGallery: RecyclerView? = null
-    private var swipeRefreshGallery: SwipeRefreshLayout? = null
+    private lateinit var recycleGallery: RecyclerView
+    private lateinit var swipeRefreshGallery: SwipeRefreshLayout
+    private var isFirst = true
 
     //    private var viewModelProvider: GalleryModel? = null
     private lateinit var viewModelProvider: GalleryModel
@@ -53,24 +57,52 @@ class GalleryFragment : Fragment() {
         setHasOptionsMenu(true)
         recycleGallery = requireActivity().findViewById(R.id.recycleGallery)
         swipeRefreshGallery = requireActivity().findViewById(R.id.swipeRefreshGallery)
-        val galleryAdapter = GalleryAdapter()
+
 //        recycleGallery?.layoutManager = GridLayoutManager(requireContext(), 2)
-        recycleGallery?.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        this.recycleGallery?.adapter = galleryAdapter
+        recycleGallery.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
 //        val get = ViewModelProvider(this).get(GalleryModel::class.java)
         viewModelProvider = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(GalleryModel::class.java)
-
+        val galleryAdapter = GalleryAdapter(viewModelProvider)
+        this.recycleGallery.adapter = galleryAdapter
         viewModelProvider.photoListLive.observe(viewLifecycleOwner, Observer {
+            if (isFirst) {
+                if (viewModelProvider.needScrollToTop) {
+                    recycleGallery.scrollToPosition(0)
+                    viewModelProvider.needScrollToTop = false
+                }
+                isFirst = false
+            }
+
             galleryAdapter.submitList(it)
-            if (swipeRefreshGallery?.isRefreshing == true) {
-                swipeRefreshGallery?.isRefreshing = false
+            if (swipeRefreshGallery.isRefreshing) {
+                swipeRefreshGallery.isRefreshing = false
             }
         })
-        viewModelProvider.photoListLive.value ?: viewModelProvider.fetchData()
 
-        swipeRefreshGallery?.setOnRefreshListener {
-            viewModelProvider.fetchData()
+        swipeRefreshGallery.setOnRefreshListener {
+            isFirst = true
+            viewModelProvider.refreshData()
+            viewModelProvider.resetQuery()
         }
+
+        recycleGallery.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy < 0) return
+                val staggeredGridLayoutManager = recycleGallery.layoutManager as StaggeredGridLayoutManager
+                val intArray = IntArray(2)
+                staggeredGridLayoutManager.findLastVisibleItemPositions(intArray)
+                if (intArray[0] == galleryAdapter.itemCount - 1) {
+                    viewModelProvider.resetQuery()
+                }
+            }
+        })
+
+        viewModelProvider.getDataStatus().observe(viewLifecycleOwner, Observer {
+            galleryAdapter.footViewStatus = it
+            if (it == DATA_STATUS_ERROR) swipeRefreshGallery.isRefreshing = false
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -81,7 +113,9 @@ class GalleryFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.swipeRefreshMenu) {
             swipeRefreshGallery?.isRefreshing = true
-            viewModelProvider.fetchData()
+            isFirst = true
+            viewModelProvider.refreshData()
+            viewModelProvider.resetQuery()
         }
         return super.onOptionsItemSelected(item)
     }
